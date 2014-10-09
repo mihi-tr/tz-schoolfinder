@@ -29,10 +29,13 @@ $(document).ready(function () {
           attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © MapQuest' }).addTo(map);
         console.log(data);
       var myll=L.latLng([pos.coords.latitude,pos.coords.longitude]);      
-      var sd=_.sortBy(_.filter(data,function(d) { return d.latitude })
-        ,function(d) {
+      data = _.map(_.filter(data,function(d) { return d.latitude }),
+        function(d) {
             var ml=L.latLng([d.latitude,d.longitude]);
-            return myll.distanceTo(ml);});
+            d.distance=parseInt(myll.distanceTo(ml));
+            return d })
+      var sd=_.sortBy(data
+        ,function(d) { return d.distance });
       closest=sd.slice(0,10);
       console.log(closest)
       var sl=L.featureGroup()
@@ -59,6 +62,8 @@ $(document).ready(function () {
 <b><%= name %></b><br/>
 <b>Pass Rate:</b>
 <%= percentage_pass_round %><br/>
+<b>Distance</b>
+<%= distance %>m<br/>
 </script>
 </body>
 </html>
